@@ -13,8 +13,10 @@ locals {
   # and <port> is one of the custom vpce services ports
   sg_id_to_port_mapping = tolist(setproduct(var.interface_vpce_source_security_group_ids, var.custom_vpce_services[*].port))
 
-  service_names_with_dns      = setunion(local.interface_endpoints_to_create, var.custom_vpce_services[*].key)
-  endpoint_resources_with_dns = merge(aws_vpc_endpoint.custom_vpc_endpoints, aws_vpc_endpoint.aws_interface_vpc_endpoints)
+  aws_interface_endpoint_dns = aws_vpc_endpoint.aws_interface_vpc_endpoints.*.dns_entry[0].dns_name
+  aws_gateway_endpoint_dns = aws_vpc_endpoint.aws_gateway_vpc_endpoints.*.dns_entry[0].dns_name
+  custom_endpoint_dns = aws_vpc_endpoint.custom_vpc_endpoints.*.dns_entry[0].dns_name
+  endpoint_dns = concat(local.aws_interface_endpoint_dns, local.aws_gateway_endpoint_dns, local.custom_endpoint_dns)
 
   vpce_subnet_combinations = [
     # in pair, element zero is a VPCE ID and element one is a Subnet ID,

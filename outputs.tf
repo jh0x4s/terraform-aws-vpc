@@ -29,10 +29,7 @@ output "ecr_dkr_domain_name" {
 }
 
 output "no_proxy_list" {
-  value = flatten(values({
-    for service in local.service_names_with_dns :
-    service => local.endpoint_resources_with_dns[service].dns_entry[*].dns_name
-  }))
+  value = local.endpoint_dns
 }
 
 
